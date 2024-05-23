@@ -1,9 +1,10 @@
 package credmark
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"runtime/debug"
 
@@ -109,20 +110,20 @@ func (c *Client) GetTokenVolume(payload GetTokenVolumePayload) (gtvResp GetToken
 		return gtvResp, err
 	}
 
-	var gtvPayload CredmarkGetTokenVolumePayload
-	gtvPayload.Slug = "token.overall-volume-window"
-	gtvPayload.ChainID = 1
-	gtvPayload.BlockNumber = "latest"
-	gtvPayload.Input.Address = payload.Address
-	gtvPayload.Input.Window = payload.Window
-	gtvPayload.Input.IncludePrice = payload.IncludePrice
+	var modelPayload CredmarkGetTokenVolumePayload
+	modelPayload.Slug = "token.overall-volume-window"
+	modelPayload.ChainID = 1
+	modelPayload.BlockNumber = "latest"
+	modelPayload.Input.Address = payload.Address
+	modelPayload.Input.Window = payload.Window
+	modelPayload.Input.IncludePrice = payload.IncludePrice
 
-	if err := ValidateStruct(gtvPayload); err != nil {
+	if err := ValidateStruct(modelPayload); err != nil {
 		log.Error(err, string(debug.Stack()))
 		return gtvResp, err
 	}
 
-	b, err := json.Marshal(gtvPayload)
+	b, err := json.Marshal(modelPayload)
 	if err != nil {
 		return gtvResp, err
 	}
@@ -141,18 +142,20 @@ func (c *Client) GetTokenVolume(payload GetTokenVolumePayload) (gtvResp GetToken
 
 	response := &CredmarkTokenVolumeResponse{}
 
+	body := &bytes.Buffer{}
+	_, err = io.Copy(body, res.Body)
+
 	if res.StatusCode != http.StatusOK { //exception
-		bodyBytes, _ := ioutil.ReadAll(res.Body)
-		bodyString := string(bodyBytes)
-		return gtvResp, fmt.Errorf("%v: Credmark GetTokenVolume Error http response status code: %v, %v", "token.overall-volume-window", res.StatusCode, bodyString)
+		bodyString := body.String()
+		return gtvResp, fmt.Errorf("%v: Credmark GetTokenVolume Error http response status code: %v, %v", modelPayload.Slug, res.StatusCode, bodyString)
 	}
 
-	body, err := ioutil.ReadAll(res.Body)
+	err = json.NewDecoder(body).Decode(&response)
 	if err != nil {
-		return gtvResp, fmt.Errorf("%v: Credmark GetTokenVolume Error: %v", "token.overall-volume-window", body)
+		return gtvResp, fmt.Errorf("%v: Decode Error: %v", modelPayload.Slug, err)
 	}
-	gtvResp.Raw = string(body[:])
-	_ = json.Unmarshal(body, &response)
+
+	gtvResp.Raw = body.String()
 	gtvResp.Output = response.Output
 
 	return
