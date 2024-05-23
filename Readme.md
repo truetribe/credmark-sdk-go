@@ -18,4 +18,4 @@ This is an unofficial Golang SDK for interacting with the [Credmark](https://cre
 To install the Credmark SDK for Go, run the following command:
 
 ```bash
-go get github.com/your-username/credmark-sdk-go
+go get github.com/truetribe/credmark-sdk-go
