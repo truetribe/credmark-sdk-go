@@ -16,6 +16,8 @@ const (
 	CLIENT_VERSION = "0.0.0"
 
 	CREDMARK_API_V1_XR_URI = "/v1/model/run"
+
+	CREDMARK_GATEWAY_URL = "https://gateway.credmark.com"
 )
 
 type ApiRequest struct {
