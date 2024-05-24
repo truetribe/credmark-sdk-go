@@ -17,7 +17,7 @@ const (
 )
 
 type GetTokenHoldersPayload struct {
-	ChainId   int    `validate:"required"` //Chain ID. Use 1 for mainnet.
+	ChainID   int    `validate:"required"` //Chain ID. Use 1 for mainnet.
 	TokenAddr string `validate:"required"` //The address of the token requested.
 	PageSize  int    `validate:"required"` //The size of the returned page. Do not change this from page to page when using a cursor.
 	Cursor    string //The cursor from the results of a previous page. Use empty string (or undefined/null) for first page.
@@ -43,12 +43,6 @@ type GetTokenHoldersCredmarkResponse struct {
 	Cursor string `json:"cursor"`
 }
 
-type GetTokenHoldersCredmarkResponseError struct {
-	StatusCode int      `json:"statusCode"`
-	Error      string   `json:"error"`
-	Message    []string `json:"message"`
-}
-
 func (c *Client) GetTokenHolders(payload GetTokenHoldersPayload) (response GetTokenHoldersCredmarkResponse, err error) {
 
 	if err := ValidateStruct(payload); err != nil {
@@ -56,7 +50,7 @@ func (c *Client) GetTokenHolders(payload GetTokenHoldersPayload) (response GetTo
 		return response, err
 	}
 
-	endpoint := fmt.Sprintf(CREDMARK_API_V1_URI_TOKEN_HOLDER, strconv.Itoa(payload.ChainId), payload.TokenAddr)
+	endpoint := fmt.Sprintf(CREDMARK_API_V1_URI_TOKEN_HOLDER, strconv.Itoa(payload.ChainID), payload.TokenAddr)
 	if err != nil {
 		log.Error(err, string(debug.Stack()))
 		return response, err

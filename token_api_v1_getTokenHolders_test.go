@@ -49,7 +49,7 @@ func TestIntegrationGetTokenHoldersSuccess(t *testing.T) {
 			c, _ := NewClient(cfg)
 
 			var payload GetTokenHoldersPayload
-			payload.ChainId = tc.chainId
+			payload.ChainID = tc.chainId
 			payload.TokenAddr = tc.tokenAddress
 			payload.PageSize = tc.pageSize
 			if tc.blockNum > 0 {
