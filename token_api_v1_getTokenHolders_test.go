@@ -24,14 +24,14 @@ func TestIntegrationGetTokenHoldersSuccess(t *testing.T) {
 		timestamp    int
 	}{
 		{
-			name:         "TestIntegrationGetTokenPriceSuccess - ETH",
+			name:         "TestGetTokenHoldersSuccess",
 			chainId:      CHAIN_ID_ETHEREUM,
 			tokenAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
 			pageSize:     10,
 			cursor:       "null",
 			quoteAddress: "",
 			scaled:       true,
-			blockNum:     15490034,
+			blockNum:     0,
 		},
 	}
 
