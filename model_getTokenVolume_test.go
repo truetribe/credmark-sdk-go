@@ -38,11 +38,11 @@ func TestIntegrationGetTokenVolumeSuccess(t *testing.T) {
 			}
 			c, _ := NewClient(cfg)
 
-			var payload GetTokenVolumePayload
+			var payload ModelGetTokenVolumePayload
 			payload.Address = tc.address
 			payload.Window = tc.window
 
-			resp, err := c.GetTokenVolume(payload)
+			resp, err := c.GetTokenVolumeModel(payload)
 			Equal(t, err, nil)
 			Equal(t, resp.Output.Address, tc.address)
 		})

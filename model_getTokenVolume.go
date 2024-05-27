@@ -11,30 +11,30 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type GetTokenVolumePayload struct {
+type ModelGetTokenVolumePayload struct {
 	Address      string `validate:"required"`
 	Window       string `validate:"required"` //"24 hours"
 	IncludePrice bool
 }
 
-type GetTokenVolumeResponse struct {
+type GetTokenVolumeModelResponse struct {
 	Raw    string
 	Output CredmarkTokenVolumeResponseOutput
 }
 
-type CredmarkGetTokenVolumePayload struct {
-	Slug        string                             `json:"slug"`
-	ChainID     int                                `json:"chainId"`
-	BlockNumber string                             `json:"blockNumber"`
-	Input       CredmarkGetTokenVolumePayloadInput `json:"input"`
+type CredmarkModelGetTokenVolumePayload struct {
+	Slug        string                                  `json:"slug"`
+	ChainID     int                                     `json:"chainId"`
+	BlockNumber string                                  `json:"blockNumber"`
+	Input       CredmarkModelGetTokenVolumePayloadInput `json:"input"`
 }
-type CredmarkGetTokenVolumePayloadInput struct {
+type CredmarkModelGetTokenVolumePayloadInput struct {
 	Address      string `json:"address"`
 	Window       string `json:"window"`
 	IncludePrice bool   `json:"include_price"`
 }
 
-type CredmarkTokenVolumeResponse struct {
+type CredmarkTokenVolumeModelResponse struct {
 	Slug         string                                  `json:"slug"`
 	Version      string                                  `json:"version"`
 	ChainID      int                                     `json:"chainId"`
@@ -103,14 +103,14 @@ type CredmarkTokenVolumeResponseDependencies struct {
 }
 
 // https://gateway.credmark.com/api/?urls.primaryName=DeFi%20API%20-%20Run%20Model%20Requests#/Models/runModel-token.overall-volume-window
-func (c *Client) GetTokenVolume(payload GetTokenVolumePayload) (gtvResp GetTokenVolumeResponse, err error) {
+func (c *Client) GetTokenVolumeModel(payload ModelGetTokenVolumePayload) (gtvResp GetTokenVolumeModelResponse, err error) {
 
 	if err := ValidateStruct(payload); err != nil {
 		log.Error(err, string(debug.Stack()))
 		return gtvResp, err
 	}
 
-	var modelPayload CredmarkGetTokenVolumePayload
+	var modelPayload CredmarkModelGetTokenVolumePayload
 	modelPayload.Slug = "token.overall-volume-window"
 	modelPayload.ChainID = 1
 	modelPayload.BlockNumber = "latest"
@@ -140,7 +140,7 @@ func (c *Client) GetTokenVolume(payload GetTokenVolumePayload) (gtvResp GetToken
 	}
 	defer res.Body.Close()
 
-	response := &CredmarkTokenVolumeResponse{}
+	response := &CredmarkTokenVolumeModelResponse{}
 
 	body := &bytes.Buffer{}
 	_, err = io.Copy(body, res.Body)
