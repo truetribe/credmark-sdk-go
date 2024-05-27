@@ -17,7 +17,7 @@ const (
 )
 
 type GetTokenPricePayload struct {
-	ChainId   int    `validate:"required"` //Chain ID. Use 1 for mainnet.
+	ChainID   int    `validate:"required"` //Chain ID. Use 1 for mainnet.
 	TokenAddr string `validate:"required"` //The address of the token requested.
 	QuoteAddr string //The address of the token/currency used as the currency of the returned price. Defaults to USD (address 0x0000000000000000000000000000000000000348)
 	BlockNum  int    //Block number of the price quote. Defaults to the latest block.
@@ -37,12 +37,6 @@ type GetTokenPriceCredmarkResponse struct {
 	SrcInternal    string  `json:"srcInternal"`
 }
 
-type GetTokenPriceCredmarkResponseError struct {
-	StatusCode int      `json:"statusCode"`
-	Error      string   `json:"error"`
-	Message    []string `json:"message"`
-}
-
 func (c *Client) GetTokenPrice(payload GetTokenPricePayload) (response GetTokenPriceCredmarkResponse, err error) {
 
 	if err := ValidateStruct(payload); err != nil {
@@ -50,7 +44,7 @@ func (c *Client) GetTokenPrice(payload GetTokenPricePayload) (response GetTokenP
 		return response, err
 	}
 
-	uri := fmt.Sprintf(CREDMARK_API_V1_URI_TOKEN_PRICE, strconv.Itoa(payload.ChainId), payload.TokenAddr)
+	uri := fmt.Sprintf(CREDMARK_API_V1_URI_TOKEN_PRICE, strconv.Itoa(payload.ChainID), payload.TokenAddr)
 	if err != nil {
 		log.Error(err, string(debug.Stack()))
 		return response, err

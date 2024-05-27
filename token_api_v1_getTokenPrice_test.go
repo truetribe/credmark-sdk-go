@@ -70,7 +70,7 @@ func TestIntegrationGetTokenPriceSuccess(t *testing.T) {
 			c, _ := NewClient(cfg)
 
 			var payload GetTokenPricePayload
-			payload.ChainId = tc.chainId
+			payload.ChainID = tc.chainId
 			payload.TokenAddr = tc.tokenAddress
 			if tc.blockNum > 0 {
 				payload.BlockNum = tc.blockNum
