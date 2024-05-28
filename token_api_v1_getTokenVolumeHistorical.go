@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	CREDMARK_API_V1_URI_TOKEN_VOLUME_HISTORICAL = "/v1/tokens/%s/%s/holders/count/historical" //chainId, tokenAddress
+	CREDMARK_API_V1_URI_TOKEN_VOLUME_HISTORICAL = "/v1/tokens/%s/%s/volume/historical" //chainId, tokenAddress
 )
 
 type GetTokenVolumeHistoricalPayload struct {
@@ -31,26 +31,31 @@ type TokenVolumeHistoricalResponse struct {
 	ChainID          int                         `json:"chainId"`
 	StartBlockNumber int                         `json:"startBlockNumber"`
 	EndBlockNumber   int                         `json:"endBlockNumber"`
-	StartTimestamp   int64                       `json:"startTimestamp"`
-	EndTimestamp     int64                       `json:"endTimestamp"`
+	StartTimestamp   int                         `json:"startTimestamp"`
+	EndTimestamp     int                         `json:"endTimestamp"`
 	TokenAddress     string                      `json:"tokenAddress"`
+	Scaled           bool                        `json:"scaled"`
 	Data             []TokenVolumeHistoricalItem `json:"data"`
 }
 
 type TokenVolumeHistoricalItem struct {
-	BlockNumber    int64 `json:"blockNumber"`
-	BlockTimestamp int64 `json:"blockTimestamp"`
-	Count          int64 `json:"count"`
+	StartBlockNumber int     `json:"startBlockNumber"`
+	EndBlockNumber   int     `json:"endBlockNumber"`
+	StartTimestamp   int     `json:"startTimestamp"`
+	EndTimestamp     int     `json:"endTimestamp"`
+	Volume           float64 `json:"volume"`
 }
 
 func (c *Client) GetTokenVolumeHistorical(payload GetTokenVolumeHistoricalPayload) (response TokenVolumeHistoricalResponse, err error) {
+
+	slug := CREDMARK_API_V1_URI_TOKEN_VOLUME_HISTORICAL
 
 	if err := ValidateStruct(payload); err != nil {
 		log.Error(err, string(debug.Stack()))
 		return response, err
 	}
 
-	endpoint := fmt.Sprintf(CREDMARK_API_V1_URI_TOKEN_VOLUME_HISTORICAL, strconv.Itoa(payload.ChainID), payload.TokenAddress)
+	endpoint := fmt.Sprintf(slug, strconv.Itoa(payload.ChainID), payload.TokenAddress)
 	if err != nil {
 		log.Error(err, string(debug.Stack()))
 		return response, err
@@ -100,12 +105,12 @@ func (c *Client) GetTokenVolumeHistorical(payload GetTokenVolumeHistoricalPayloa
 	body := &bytes.Buffer{}
 	_, err = io.Copy(body, res.Body)
 	if err != nil {
-		return response, fmt.Errorf("%v: Response Error: %v", CREDMARK_API_V1_URI_TOKEN_VOLUME_HISTORICAL, body)
+		return response, fmt.Errorf("%v: Response Error: %v", slug, body)
 	}
 
 	err = json.NewDecoder(body).Decode(&response)
 	if err != nil {
-		return response, fmt.Errorf("%v: Decode Error: %v", CREDMARK_API_V1_URI_TOKEN_VOLUME_HISTORICAL, err)
+		return response, fmt.Errorf("%v: Decode Error: %v", slug, err)
 	}
 
 	return
