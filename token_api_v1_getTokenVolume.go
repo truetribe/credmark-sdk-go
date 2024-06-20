@@ -39,12 +39,14 @@ type GetTokenVolumeResponse struct {
 
 func (c *Client) GetTokenVolume(payload GetTokenVolumePayload) (response GetTokenVolumeResponse, err error) {
 
+	slug := CREDMARK_TOKEN_API_V1_VOLUME
+
 	if err := ValidateStruct(payload); err != nil {
 		log.Error(err, string(debug.Stack()))
 		return response, err
 	}
 
-	uri := fmt.Sprintf(CREDMARK_API_V1_URI_TOKEN_PRICE, strconv.Itoa(payload.ChainID), payload.TokenAddr)
+	uri := fmt.Sprintf(slug, strconv.Itoa(payload.ChainID), payload.TokenAddr)
 	if err != nil {
 		log.Error(err, string(debug.Stack()))
 		return response, err
@@ -93,12 +95,12 @@ func (c *Client) GetTokenVolume(payload GetTokenVolumePayload) (response GetToke
 	body := &bytes.Buffer{}
 	_, err = io.Copy(body, res.Body)
 	if err != nil {
-		return response, fmt.Errorf("%v: Response Error: %v", CREDMARK_API_V1_URI_TOKEN_PRICE, body)
+		return response, fmt.Errorf("%v: Response Error: %v", slug, body)
 	}
 
 	err = json.NewDecoder(body).Decode(&response)
 	if err != nil {
-		return response, fmt.Errorf("%v: Decode Error: %v", CREDMARK_API_V1_URI_TOKEN_PRICE, err)
+		return response, fmt.Errorf("%v: Decode Error: %v", slug, err)
 	}
 
 	return
